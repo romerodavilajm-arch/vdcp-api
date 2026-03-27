@@ -101,7 +101,7 @@
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/resources/api/openapi.yaml</inputSpec>
 							<generatorName>spring</generatorName>
-							<modelPackage>com.ejemplo.api.model</modelPackage>
+							<modelPackage>tecnm.mx.vdcp.api.model</modelPackage>
 							<generateModels>true</generateModels>
 							<generateApis>false</generateApis>
 							<generateSupportingFiles>false</generateSupportingFiles>
