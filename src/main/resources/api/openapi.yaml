@@ -28,7 +28,7 @@ paths:
   # ─── Puntos de Venta ───────────────────────────────────────────
   /puntos-venta:
     get:
-      tags: [ Puntos de Venta ]
+      tags: [Puntos de Venta]
       operationId: listPuntosVenta
       summary: Listar puntos de venta
       description: Devuelve todos los puntos de venta. Acepta filtros opcionales para el mapa.
@@ -49,7 +49,7 @@ paths:
         - name: dias_operacion
           in: query
           description: Filtrar por día(s) de operación
-          example: [ sabado, domingo ]
+          example: [sabado, domingo]
           schema:
             type: array
             items:
@@ -79,7 +79,7 @@ paths:
                       delegacion: Felipe Carrillo Puerto
                       poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
                       imagen_url: https://cdn.vdcp.mx/imagenes/tianguis-calle-nueva.jpg
-                      dias_operacion: [ sabado, domingo ]
+                      dias_operacion: [sabado, domingo]
                       horario: De 7 a 2 pm
                       tipo_horario: matutino
                       asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
@@ -89,14 +89,14 @@ paths:
                       observaciones: Opera solo en temporada de lluvia
                 listaVacia:
                   summary: Sin resultados
-                  value: [ ]
+                  value: []
         "400":
           $ref: "#/components/responses/ErrorValidacion"
         "500":
           $ref: "#/components/responses/ErrorInterno"
 
     post:
-      tags: [ Puntos de Venta ]
+      tags: [Puntos de Venta]
       operationId: createPuntoDeVenta
       summary: Crear punto de venta
       description: >
@@ -121,7 +121,7 @@ paths:
                   referencia: A un costado de las canchas
                   delegacion: Felipe Carrillo Puerto
                   poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
-                  dias_operacion: [ sabado, domingo ]
+                  dias_operacion: [sabado, domingo]
                   horario: De 7 a 2 pm
                   tipo_horario: matutino
                   asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
@@ -147,7 +147,7 @@ paths:
                     referencia: A un costado de las canchas
                     delegacion: Felipe Carrillo Puerto
                     poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
-                    dias_operacion: [ sabado, domingo ]
+                    dias_operacion: [sabado, domingo]
                     horario: De 7 a 2 pm
                     tipo_horario: matutino
                     asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
@@ -171,7 +171,7 @@ paths:
         example: 1
 
     get:
-      tags: [ Puntos de Venta ]
+      tags: [Puntos de Venta]
       operationId: getPuntoDeVenta
       summary: Obtener punto de venta
       description: Devuelve el detalle completo de un punto de venta para la ficha técnica.
@@ -196,7 +196,7 @@ paths:
                     delegacion: Felipe Carrillo Puerto
                     poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
                     imagen_url: https://cdn.vdcp.mx/imagenes/tianguis-calle-nueva.jpg
-                    dias_operacion: [ sabado, domingo ]
+                    dias_operacion: [sabado, domingo]
                     horario: De 7 a 2 pm
                     tipo_horario: matutino
                     asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
@@ -210,7 +210,7 @@ paths:
           $ref: "#/components/responses/ErrorInterno"
 
     put:
-      tags: [ Puntos de Venta ]
+      tags: [Puntos de Venta]
       operationId: updatePuntoDeVenta
       summary: Actualizar punto de venta
       description: >
@@ -233,7 +233,7 @@ paths:
                   colonia_id: 12
                   referencia: A un costado de las canchas
                   delegacion: Felipe Carrillo Puerto
-                  dias_operacion: [ sabado ]
+                  dias_operacion: [sabado]
                   horario: De 8 a 1 pm
                   tipo_horario: matutino
                   asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
@@ -260,7 +260,7 @@ paths:
                     delegacion: Felipe Carrillo Puerto
                     poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))" # [CORREGIDO: hallazgo-010]
                     imagen_url: https://cdn.vdcp.mx/imagenes/tianguis-calle-nueva.jpg # [CORREGIDO: hallazgo-010]
-                    dias_operacion: [ sabado ]
+                    dias_operacion: [sabado]
                     horario: De 8 a 1 pm
                     tipo_horario: matutino
                     asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C. # [CORREGIDO: hallazgo-010]
@@ -274,7 +274,7 @@ paths:
           $ref: "#/components/responses/ErrorInterno"
 
     delete:
-      tags: [ Puntos de Venta ]
+      tags: [Puntos de Venta]
       operationId: deletePuntoDeVenta
       summary: Eliminar punto de venta
       description: "Elimina permanentemente un punto de venta del padrón. Esta operación no puede deshacerse."
@@ -298,7 +298,7 @@ paths:
   # ─── Estadísticas ──────────────────────────────────────────────
   /estadisticas:
     get:
-      tags: [ Estadísticas ]
+      tags: [Estadísticas]
       operationId: getEstadisticas
       summary: Estadísticas de afiliaciones
       description: Devuelve el conteo de puntos de venta agrupados por afiliación para la gráfica de pastel.
@@ -332,7 +332,7 @@ paths:
   # ─── Catálogos ─────────────────────────────────────────────────
   /afiliaciones:
     get:
-      tags: [ Afiliaciones ]
+      tags: [Afiliaciones]
       operationId: listAfiliaciones
       summary: Listar afiliaciones
       description: "Devuelve el catálogo completo de afiliaciones disponibles para asignar a puntos de venta."
@@ -358,7 +358,7 @@ paths:
 
   /colonias:
     get:
-      tags: [ Colonias ]
+      tags: [Colonias]
       operationId: listColonias
       summary: Listar colonias
       description: "Devuelve el catálogo completo de colonias del municipio para asignar a puntos de venta."
@@ -387,6 +387,13 @@ components:
   schemas:
     PuntoDeVentaBase:
       type: object
+      required:
+        - nombre
+        - tipo_instalacion
+        - estatus
+        - delegacion
+        - colonia_id
+        - afiliacion_id
       properties:
         nombre:
           description: "Nombre oficial o común del punto de venta tal como aparece en el padrón municipal."
@@ -395,10 +402,8 @@ components:
           maxLength: 200
           example: Tianguis Calle Nueva
         tipo_instalacion:
-          description: "Clasificación física de la instalación. Ver schema TipoInstalacion."
           $ref: "#/components/schemas/TipoInstalacion"
         estatus:
-          description: "Estado de viabilidad del punto de venta según la última inspección. Ver schema Estatus."
           $ref: "#/components/schemas/Estatus"
         delimitaciones:
           description: "Descripción textual de los límites físicos o calles que delimitan el punto de venta."
@@ -418,7 +423,6 @@ components:
           maxLength: 300
           example: A un costado de las canchas
         delegacion:
-          description: "Delegación territorial del municipio donde se ubica el punto de venta. Ver schema Delegacion."
           $ref: "#/components/schemas/Delegacion"
         poligono:
           description: >
@@ -440,7 +444,7 @@ components:
           nullable: true
           items:
             $ref: "#/components/schemas/DiaSemana"
-          example: [ sabado, domingo ]
+          example: [sabado, domingo]
         horario:
           description: "Descripción textual del horario de operación. Formato recomendado: HH:MM - HH:MM."
           type: string
@@ -481,7 +485,6 @@ components:
           nullable: true
           maxLength: 1000
           example: Opera solo en temporada de lluvia
-      $ref:
 
     PuntoDeVentaInput:
       # [CORREGIDO: hallazgo-006] Schema separado de PuntoDeVentaBase de forma
@@ -500,7 +503,7 @@ components:
       description: "Punto de venta registrado en el padrón, incluyendo el identificador generado por el sistema."
       allOf:
         - type: object
-          required: [ id ]
+          required: [id]
           properties:
             id:
               description: "Identificador único del punto de venta, generado automáticamente."
@@ -514,7 +517,7 @@ components:
     Afiliacion:
       description: "Organización gremial, sindical o agrupación comercial a la que pueden estar afiliados los puntos de venta."
       type: object
-      required: [ id, nombre ] # [CORREGIDO: hallazgo-002]
+      required: [id, nombre] # [CORREGIDO: hallazgo-002]
       properties:
         id:
           description: "Identificador único de la afiliación."
@@ -531,7 +534,7 @@ components:
     Colonia:
       description: "Colonia o fraccionamiento del municipio de Querétaro donde puede ubicarse un punto de venta."
       type: object
-      required: [ id, nombre ] # [CORREGIDO: hallazgo-003]
+      required: [id, nombre] # [CORREGIDO: hallazgo-003]
       properties:
         id:
           description: "Identificador único de la colonia."
@@ -548,7 +551,7 @@ components:
     EstadisticaAfiliacion:
       description: "Agregado estadístico del número de puntos de venta registrados bajo una afiliación específica."
       type: object
-      required: [ afiliacion_id, afiliacion_nombre, total_puntos_venta ] # [CORREGIDO: hallazgo-004]
+      required: [afiliacion_id, afiliacion_nombre, total_puntos_venta] # [CORREGIDO: hallazgo-004]
       properties:
         afiliacion_id:
           description: "Identificador de la afiliación."
@@ -567,7 +570,7 @@ components:
 
     MensajeConfirmacion: # [CORREGIDO: hallazgo-009]
       type: object
-      required: [ mensaje ]
+      required: [mensaje]
       properties:
         mensaje:
           type: string
@@ -575,7 +578,7 @@ components:
 
     Error:
       type: object
-      required: [ codigo, mensaje ]
+      required: [codigo, mensaje]
       properties:
         codigo:
           type: string
@@ -593,7 +596,7 @@ components:
         mercado: instalación fija techada con puestos individuales.
         otro: cualquier modalidad no clasificada en las anteriores.
       type: string
-      enum: [ tianguis, corredor, mercado, otro ]
+      enum: [tianguis, corredor, mercado, otro]
       example: tianguis
 
     Estatus:
@@ -602,7 +605,7 @@ components:
         viable: cumple con los requisitos y puede operar con normalidad.
         no_viable: presenta incumplimientos; sujeto a revisión o clausura.
       type: string
-      enum: [ viable, no_viable ] # [CORREGIDO: hallazgo-005] — anterior: [Viable, No viable]
+      enum: [viable, no_viable] # [CORREGIDO: hallazgo-005] — anterior: [Viable, No viable]
       example: viable
 
     TipoHorario:
@@ -612,7 +615,7 @@ components:
         nocturno: opera principalmente en horario nocturno.
         mixto: opera en múltiples franjas horarias.
       type: string
-      enum: [ matutino, nocturno, mixto ]
+      enum: [matutino, nocturno, mixto]
       example: matutino
 
     DiaSemana:
@@ -623,7 +626,7 @@ components:
         URL, bases de datos sin soporte Unicode completo y clientes legacy.
         Convención establecida: no modificar a formas acentuadas (miércoles,
         sábado) sin coordinar una migración versionada de la API.
-      enum: [ lunes, martes, miercoles, jueves, viernes, sabado, domingo ]
+      enum: [lunes, martes, miercoles, jueves, viernes, sabado, domingo]
       example: sabado
 
     Delegacion:
