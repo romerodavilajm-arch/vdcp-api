@@ -1,6 +1,3 @@
-Aquí tienes un pequeño README que documenta el proceso de configuración inicial del proyecto:
-
-```markdown
 # VDCP API – Visor de Comercio Popular
 
 API para la gestión del padrón comercial de puntos de venta del municipio de Querétaro.
