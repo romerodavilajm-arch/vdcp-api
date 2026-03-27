@@ -58,6 +58,25 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Configurar pom.xml para generar modelos...
+		Añadir dependencias compatibles con Jakarta EE 11 y Spring Boot 4.0.4 -->
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>2.2.22</version>
+		</dependency>
+		<!-- Fin de dependencias añadidas -->
 	</dependencies>
 
 	<build>
@@ -66,6 +85,39 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<!-- Añadir el plugin generador...
+			Este es el motor que generará el código. -->
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>7.5.0</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/api/openapi.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<modelPackage>com.ejemplo.api.model</modelPackage>
+							<generateModels>true</generateModels>
+							<generateApis>false</generateApis>
+							<generateSupportingFiles>false</generateSupportingFiles>
+							<configOptions>
+								<useJakartaEe>true</useJakartaEe>
+								<interfaceOnly>false</interfaceOnly>
+								<skipDefaultInterface>true</skipDefaultInterface>
+								<serializableModel>true</serializableModel>
+								<useBeanValidation>true</useBeanValidation>
+								<useVirtualThreads>true</useVirtualThreads>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Fin del plugin añadido -->
 		</plugins>
 	</build>
 

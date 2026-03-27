@@ -1,0 +1,685 @@
+openapi: 3.0.3
+info:
+  title: VDCP – Visor de Comercio Popular
+  description: API para la gestión del padrón comercial de puntos de venta del municipio de Querétaro.
+  version: 1.0.0
+  contact:
+    name: Dirección de Inspección en Comercio, Espectáculos e Industria
+    email: l22140248@queretaro.tecnm.mx
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Servidor de desarrollo
+
+tags:
+  - name: Puntos de Venta
+    description: CRUD de puntos de venta
+  - name: Afiliaciones
+    description: Catálogo de afiliaciones
+  - name: Colonias
+    description: Catálogo de colonias
+  - name: Estadísticas
+    description: Datos agregados para supervisión
+
+paths:
+  # ─── Puntos de Venta ───────────────────────────────────────────
+  /puntos-venta:
+    get:
+      tags: [ Puntos de Venta ]
+      operationId: listPuntosVenta
+      summary: Listar puntos de venta
+      description: Devuelve todos los puntos de venta. Acepta filtros opcionales para el mapa.
+      parameters:
+        - name: delegacion
+          in: query
+          description: "Filtra los puntos de venta por delegación territorial. Si se omite, se devuelven todas."
+          example: Centro Historico
+          schema:
+            $ref: "#/components/schemas/Delegacion"
+        - name: afiliacion_id
+          in: query
+          description: "Filtra por identificador de afiliación. Debe corresponder a un id válido de GET /afiliaciones."
+          example: 3
+          schema:
+            type: integer
+            format: int32
+        - name: dias_operacion
+          in: query
+          description: Filtrar por día(s) de operación
+          example: [ sabado, domingo ]
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/DiaSemana"
+          style: form
+          explode: false
+      responses:
+        "200":
+          description: Lista de puntos de venta
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PuntoDeVenta"
+              examples:
+                listaEjemplo:
+                  summary: Lista con un punto de venta
+                  value:
+                    - id: 1
+                      nombre: Tianguis Calle Nueva
+                      tipo_instalacion: tianguis
+                      estatus: viable # [CORREGIDO: hallazgo-005]
+                      delimitaciones: Calle Nueva entre Calle los Mendoza y Calle Dalia
+                      colonia_id: 12
+                      referencia: A un costado de las canchas
+                      delegacion: Felipe Carrillo Puerto
+                      poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
+                      imagen_url: https://cdn.vdcp.mx/imagenes/tianguis-calle-nueva.jpg
+                      dias_operacion: [ sabado, domingo ]
+                      horario: De 7 a 2 pm
+                      tipo_horario: matutino
+                      asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
+                      afiliacion_id: 3
+                      representante_general: Felipe Carrillo Puerto
+                      estructura: Puestos semifijos con lonas
+                      observaciones: Opera solo en temporada de lluvia
+                listaVacia:
+                  summary: Sin resultados
+                  value: [ ]
+        "400":
+          $ref: "#/components/responses/ErrorValidacion"
+        "500":
+          $ref: "#/components/responses/ErrorInterno"
+
+    post:
+      tags: [ Puntos de Venta ]
+      operationId: createPuntoDeVenta
+      summary: Crear punto de venta
+      description: >
+        Registra un nuevo punto de venta en el padrón municipal.
+        El campo id se genera automáticamente y se devuelve en la respuesta.
+        Requiere que colonia_id y afiliacion_id existan en sus catálogos respectivos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PuntoDeVentaInput"
+            examples:
+              tianguisNuevo:
+                summary: Tianguis nuevo
+                value:
+                  nombre: Tianguis Calle Nueva
+                  tipo_instalacion: tianguis
+                  estatus: viable # [CORREGIDO: hallazgo-005]
+                  delimitaciones: Calle Nueva entre Calle los Mendoza y Calle Dalia
+                  colonia_id: 12
+                  referencia: A un costado de las canchas
+                  delegacion: Felipe Carrillo Puerto
+                  poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
+                  dias_operacion: [ sabado, domingo ]
+                  horario: De 7 a 2 pm
+                  tipo_horario: matutino
+                  asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
+                  afiliacion_id: 3
+                  representante_general: Felipe Carrillo Puerto
+      responses:
+        "201":
+          description: Punto de venta creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PuntoDeVenta"
+              examples:
+                creado:
+                  summary: Punto de venta creado exitosamente
+                  value:
+                    id: 1
+                    nombre: Tianguis Calle Nueva
+                    tipo_instalacion: tianguis
+                    estatus: viable # [CORREGIDO: hallazgo-005]
+                    delimitaciones: Calle Nueva entre Calle los Mendoza y Calle Dalia
+                    colonia_id: 12
+                    referencia: A un costado de las canchas
+                    delegacion: Felipe Carrillo Puerto
+                    poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
+                    dias_operacion: [ sabado, domingo ]
+                    horario: De 7 a 2 pm
+                    tipo_horario: matutino
+                    asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
+                    afiliacion_id: 3
+                    representante_general: Felipe Carrillo Puerto
+        "400":
+          $ref: "#/components/responses/ErrorValidacion"
+        "500":
+          $ref: "#/components/responses/ErrorInterno"
+
+  /puntos-venta/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: "Identificador único del punto de venta."
+        schema:
+          type: integer
+          format: int32
+          minimum: 1
+        example: 1
+
+    get:
+      tags: [ Puntos de Venta ]
+      operationId: getPuntoDeVenta
+      summary: Obtener punto de venta
+      description: Devuelve el detalle completo de un punto de venta para la ficha técnica.
+      responses:
+        "200":
+          description: Detalle del punto de venta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PuntoDeVenta"
+              examples:
+                fichaTecnica:
+                  summary: Ficha técnica completa
+                  value:
+                    id: 1
+                    nombre: Tianguis Calle Nueva
+                    tipo_instalacion: tianguis
+                    estatus: viable # [CORREGIDO: hallazgo-005]
+                    delimitaciones: Calle Nueva entre Calle los Mendoza y Calle Dalia
+                    colonia_id: 12
+                    referencia: A un costado de las canchas
+                    delegacion: Felipe Carrillo Puerto
+                    poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
+                    imagen_url: https://cdn.vdcp.mx/imagenes/tianguis-calle-nueva.jpg
+                    dias_operacion: [ sabado, domingo ]
+                    horario: De 7 a 2 pm
+                    tipo_horario: matutino
+                    asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
+                    afiliacion_id: 3
+                    representante_general: Felipe Carrillo Puerto
+                    estructura: Puestos semifijos con lonas
+                    observaciones: Opera solo en temporada de lluvia
+        "404":
+          $ref: "#/components/responses/NoEncontrado"
+        "500":
+          $ref: "#/components/responses/ErrorInterno"
+
+    put:
+      tags: [ Puntos de Venta ]
+      operationId: updatePuntoDeVenta
+      summary: Actualizar punto de venta
+      description: >
+        Reemplaza completamente los datos de un punto de venta existente.
+        Todos los campos requeridos de PuntoDeVentaInput deben enviarse.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PuntoDeVentaInput"
+            examples:
+              actualizacion:
+                summary: Cambio de estatus y horario
+                value:
+                  nombre: Tianguis Calle Nueva
+                  tipo_instalacion: tianguis
+                  estatus: no_viable # [CORREGIDO: hallazgo-005]
+                  delimitaciones: Calle Nueva entre Calle los Mendoza y Calle Dalia
+                  colonia_id: 12
+                  referencia: A un costado de las canchas
+                  delegacion: Felipe Carrillo Puerto
+                  dias_operacion: [ sabado ]
+                  horario: De 8 a 1 pm
+                  tipo_horario: matutino
+                  asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C.
+                  afiliacion_id: 3
+                  representante_general: Felipe Carrillo Puerto
+      responses:
+        "200":
+          description: Punto de venta actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PuntoDeVenta"
+              examples:
+                actualizado:
+                  summary: Punto de venta actualizado exitosamente
+                  value:
+                    id: 1
+                    nombre: Tianguis Calle Nueva
+                    tipo_instalacion: tianguis
+                    estatus: no_viable # [CORREGIDO: hallazgo-005]
+                    delimitaciones: Calle Nueva entre Calle los Mendoza y Calle Dalia # [CORREGIDO: hallazgo-010]
+                    colonia_id: 12
+                    referencia: A un costado de las canchas # [CORREGIDO: hallazgo-010]
+                    delegacion: Felipe Carrillo Puerto
+                    poligono: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))" # [CORREGIDO: hallazgo-010]
+                    imagen_url: https://cdn.vdcp.mx/imagenes/tianguis-calle-nueva.jpg # [CORREGIDO: hallazgo-010]
+                    dias_operacion: [ sabado ]
+                    horario: De 8 a 1 pm
+                    tipo_horario: matutino
+                    asociacion: Unión de Comerciantes de San Antonio de la Punta, A.C. # [CORREGIDO: hallazgo-010]
+                    afiliacion_id: 3
+                    representante_general: Felipe Carrillo Puerto # [CORREGIDO: hallazgo-010]
+        "400":
+          $ref: "#/components/responses/ErrorValidacion"
+        "404":
+          $ref: "#/components/responses/NoEncontrado"
+        "500":
+          $ref: "#/components/responses/ErrorInterno"
+
+    delete:
+      tags: [ Puntos de Venta ]
+      operationId: deletePuntoDeVenta
+      summary: Eliminar punto de venta
+      description: "Elimina permanentemente un punto de venta del padrón. Esta operación no puede deshacerse."
+      responses:
+        "200":
+          description: Punto de venta eliminado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensajeConfirmacion" # [CORREGIDO: hallazgo-009]
+              examples:
+                eliminado:
+                  summary: Eliminación exitosa
+                  value:
+                    mensaje: Punto de venta eliminado correctamente
+        "404":
+          $ref: "#/components/responses/NoEncontrado"
+        "500":
+          $ref: "#/components/responses/ErrorInterno"
+
+  # ─── Estadísticas ──────────────────────────────────────────────
+  /estadisticas:
+    get:
+      tags: [ Estadísticas ]
+      operationId: getEstadisticas
+      summary: Estadísticas de afiliaciones
+      description: Devuelve el conteo de puntos de venta agrupados por afiliación para la gráfica de pastel.
+      responses:
+        "200":
+          description: Datos agregados por afiliación
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EstadisticaAfiliacion"
+              examples:
+                estadisticasEjemplo:
+                  summary: Conteo por afiliación
+                  value:
+                    - afiliacion_id: 1
+                      afiliacion_nombre: FUCQ
+                      total_puntos_venta: 42
+                    - afiliacion_id: 2
+                      afiliacion_nombre: UNCE
+                      total_puntos_venta: 18
+                    - afiliacion_id: 3
+                      afiliacion_nombre: Independiente
+                      total_puntos_venta: 7
+        "400":
+          $ref: "#/components/responses/ErrorValidacion"
+        "500":
+          $ref: "#/components/responses/ErrorInterno"
+
+  # ─── Catálogos ─────────────────────────────────────────────────
+  /afiliaciones:
+    get:
+      tags: [ Afiliaciones ]
+      operationId: listAfiliaciones
+      summary: Listar afiliaciones
+      description: "Devuelve el catálogo completo de afiliaciones disponibles para asignar a puntos de venta."
+      responses:
+        "200":
+          description: Catálogo de afiliaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Afiliacion"
+              examples:
+                catalogo:
+                  summary: Afiliaciones registradas
+                  value:
+                    - id: 1
+                      nombre: FUCQ
+                    - id: 2
+                      nombre: UNCE
+        "500":
+          $ref: "#/components/responses/ErrorInterno"
+
+  /colonias:
+    get:
+      tags: [ Colonias ]
+      operationId: listColonias
+      summary: Listar colonias
+      description: "Devuelve el catálogo completo de colonias del municipio para asignar a puntos de venta."
+      responses:
+        "200":
+          description: Catálogo de colonias
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Colonia"
+              examples:
+                catalogo:
+                  summary: Colonias registradas
+                  value:
+                    - id: 12
+                      nombre: San Antonio de la Punta
+                    - id: 13
+                      nombre: Centro Histórico
+        "500":
+          $ref: "#/components/responses/ErrorInterno"
+
+# ─── Componentes ───────────────────────────────────────────────────
+components:
+  schemas:
+    PuntoDeVentaBase:
+      type: object
+      properties:
+        nombre:
+          description: "Nombre oficial o común del punto de venta tal como aparece en el padrón municipal."
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: Tianguis Calle Nueva
+        tipo_instalacion:
+          description: "Clasificación física de la instalación. Ver schema TipoInstalacion."
+          $ref: "#/components/schemas/TipoInstalacion"
+        estatus:
+          description: "Estado de viabilidad del punto de venta según la última inspección. Ver schema Estatus."
+          $ref: "#/components/schemas/Estatus"
+        delimitaciones:
+          description: "Descripción textual de los límites físicos o calles que delimitan el punto de venta."
+          type: string
+          nullable: true
+          maxLength: 500
+          example: Calle Nueva entre Calle los Mendoza y Calle Dalia
+        colonia_id:
+          description: "Identificador de la colonia donde se ubica el punto de venta. Debe existir en GET /colonias."
+          type: integer
+          format: int32
+          example: 12
+        referencia:
+          description: "Referencia geográfica o punto de referencia cercano para localizar el punto de venta."
+          type: string
+          nullable: true
+          maxLength: 300
+          example: A un costado de las canchas
+        delegacion:
+          description: "Delegación territorial del municipio donde se ubica el punto de venta. Ver schema Delegacion."
+          $ref: "#/components/schemas/Delegacion"
+        poligono:
+          description: >
+            Geometría del área del punto de venta en formato WKT (Well-Known Text),
+            compatible con PostGIS. Ejemplo: POLYGON((lon1 lat1, lon2 lat2, ...)).
+            No se acepta formato GeoJSON en este campo.
+          type: string
+          nullable: true
+          example: "POLYGON((100.0 0.0, 101.0 0.0, 101.0 1.0, 100.0 0.0))"
+        imagen_url:
+          description: "URL pública de la imagen representativa del punto de venta. Gestionada externamente vía CDN."
+          type: string
+          format: uri
+          nullable: true
+          example: https://cdn.vdcp.mx/imagenes/tianguis-calle-nueva.jpg
+        dias_operacion:
+          description: "Lista de días de la semana en que opera el punto de venta."
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/DiaSemana"
+          example: [ sabado, domingo ]
+        horario:
+          description: "Descripción textual del horario de operación. Formato recomendado: HH:MM - HH:MM."
+          type: string
+          nullable: true
+          maxLength: 100
+          example: De 7 a 2 pm
+        tipo_horario:
+          description: "Franja horaria predominante de operación. Ver schema TipoHorario."
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/TipoHorario"
+        asociacion:
+          description: "Nombre de la asociación u organización civil a la que pertenece el punto de venta, si aplica."
+          type: string
+          nullable: true
+          maxLength: 200
+          example: Unión de Comerciantes de San Antonio de la Punta, A.C.
+        afiliacion_id:
+          description: "Identificador de la afiliación gremial del punto de venta. Debe existir en GET /afiliaciones."
+          type: integer
+          format: int32
+          example: 3
+        representante_general:
+          description: "Nombre completo del representante legal o delegado del punto de venta."
+          type: string
+          nullable: true
+          maxLength: 150
+          example: Felipe Carrillo Puerto
+        estructura:
+          description: "Descripción del tipo de infraestructura física del punto de venta (lonas, puestos fijos, etc.)."
+          type: string
+          nullable: true
+          maxLength: 500
+          example: Puestos semifijos con lonas
+        observaciones:
+          description: "Notas adicionales relevantes para inspección o supervisión del punto de venta."
+          type: string
+          nullable: true
+          maxLength: 1000
+          example: Opera solo en temporada de lluvia
+      $ref:
+
+    PuntoDeVentaInput:
+      # [CORREGIDO: hallazgo-006] Schema separado de PuntoDeVentaBase de forma
+      # intencional para permitir evolución independiente del contrato de entrada
+      # (p.ej. campos exclusivos de escritura o restricciones adicionales de validación)
+      # sin afectar el schema de respuesta PuntoDeVenta.
+      description: >
+        Cuerpo de la petición para crear o actualizar un punto de venta.
+        Comparte la estructura de PuntoDeVentaBase; se mantiene como schema
+        independiente para permitir su extensión futura sin alterar el schema
+        de respuesta.
+      allOf:
+        - $ref: "#/components/schemas/PuntoDeVentaBase"
+
+    PuntoDeVenta:
+      description: "Punto de venta registrado en el padrón, incluyendo el identificador generado por el sistema."
+      allOf:
+        - type: object
+          required: [ id ]
+          properties:
+            id:
+              description: "Identificador único del punto de venta, generado automáticamente."
+              type: integer
+              format: int32
+              readOnly: true
+              minimum: 1
+              example: 1
+        - $ref: "#/components/schemas/PuntoDeVentaBase"
+
+    Afiliacion:
+      description: "Organización gremial, sindical o agrupación comercial a la que pueden estar afiliados los puntos de venta."
+      type: object
+      required: [ id, nombre ] # [CORREGIDO: hallazgo-002]
+      properties:
+        id:
+          description: "Identificador único de la afiliación."
+          type: integer
+          format: int32
+          example: 1
+        nombre:
+          description: "Nombre completo de la organización o agrupación."
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: FUCQ
+
+    Colonia:
+      description: "Colonia o fraccionamiento del municipio de Querétaro donde puede ubicarse un punto de venta."
+      type: object
+      required: [ id, nombre ] # [CORREGIDO: hallazgo-003]
+      properties:
+        id:
+          description: "Identificador único de la colonia."
+          type: integer
+          format: int32
+          example: 12
+        nombre:
+          description: "Nombre oficial de la colonia o fraccionamiento."
+          type: string
+          minLength: 1
+          maxLength: 150
+          example: San Antonio de la Punta
+
+    EstadisticaAfiliacion:
+      description: "Agregado estadístico del número de puntos de venta registrados bajo una afiliación específica."
+      type: object
+      required: [ afiliacion_id, afiliacion_nombre, total_puntos_venta ] # [CORREGIDO: hallazgo-004]
+      properties:
+        afiliacion_id:
+          description: "Identificador de la afiliación."
+          type: integer
+          format: int32
+          example: 1
+        afiliacion_nombre:
+          description: "Nombre de la afiliación para presentación en gráficas o reportes."
+          type: string
+          example: FUCQ
+        total_puntos_venta:
+          description: "Número total de puntos de venta registrados bajo esta afiliación."
+          type: integer
+          format: int32
+          example: 42
+
+    MensajeConfirmacion: # [CORREGIDO: hallazgo-009]
+      type: object
+      required: [ mensaje ]
+      properties:
+        mensaje:
+          type: string
+          example: Operación realizada correctamente
+
+    Error:
+      type: object
+      required: [ codigo, mensaje ]
+      properties:
+        codigo:
+          type: string
+          example: RECURSO_NO_ENCONTRADO
+        mensaje:
+          type: string
+          example: El punto de venta con id 99 no existe
+
+    # ─── Enums ───────────────────────────────────────────
+    TipoInstalacion:
+      description: >
+        Clasificación física del punto de venta:
+        tianguis: mercado informal itinerante al aire libre.
+        corredor: conjunto de puestos alineados en vía pública.
+        mercado: instalación fija techada con puestos individuales.
+        otro: cualquier modalidad no clasificada en las anteriores.
+      type: string
+      enum: [ tianguis, corredor, mercado, otro ]
+      example: tianguis
+
+    Estatus:
+      description: >
+        Estado de viabilidad del punto de venta según la última inspección:
+        viable: cumple con los requisitos y puede operar con normalidad.
+        no_viable: presenta incumplimientos; sujeto a revisión o clausura.
+      type: string
+      enum: [ viable, no_viable ] # [CORREGIDO: hallazgo-005] — anterior: [Viable, No viable]
+      example: viable
+
+    TipoHorario:
+      description: >
+        Franja horaria predominante de operación del punto de venta:
+        matutino: opera principalmente en horario de mañana.
+        nocturno: opera principalmente en horario nocturno.
+        mixto: opera en múltiples franjas horarias.
+      type: string
+      enum: [ matutino, nocturno, mixto ]
+      example: matutino
+
+    DiaSemana:
+      type: string
+      description: >
+        Día de la semana. Los valores se expresan en minúsculas y sin tildes
+        de forma intencional para garantizar compatibilidad con parámetros de
+        URL, bases de datos sin soporte Unicode completo y clientes legacy.
+        Convención establecida: no modificar a formas acentuadas (miércoles,
+        sábado) sin coordinar una migración versionada de la API.
+      enum: [ lunes, martes, miercoles, jueves, viernes, sabado, domingo ]
+      example: sabado
+
+    Delegacion:
+      description: Delegación territorial del municipio de Querétaro donde se ubica el punto de venta.
+      type: string
+      enum:
+        - Felipe Carrillo Puerto
+        - Felix Osores Sotomayor
+        - Josefa Vergara y Hernandez
+        - Villa Cayetano Rubio
+        - Epigmenio Gonzales
+        - Santa Rosa Jauregui
+        - Centro Historico
+      example: Centro Historico
+
+  responses:
+    NoEncontrado:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            noEncontrado:
+              summary: ID no existe
+              value:
+                codigo: RECURSO_NO_ENCONTRADO
+                mensaje: El punto de venta solicitado no existe
+
+    ErrorValidacion:
+      description: Datos de entrada inválidos
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            campoRequerido:
+              summary: Campo obligatorio faltante
+              value:
+                codigo: ERROR_VALIDACION
+                mensaje: El campo nombre es requerido
+            valorInvalido:
+              summary: Valor fuera de enum
+              value:
+                codigo: ERROR_VALIDACION
+                mensaje: El valor 'vespertino' no es válido para tipo_horario
+
+    ErrorInterno:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            errorInterno:
+              summary: Error inesperado
+              value:
+                codigo: ERROR_INTERNO
+                mensaje: Ocurrió un error inesperado
