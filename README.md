@@ -8,29 +8,29 @@ El proyecto se inicializó utilizando [Spring Initializr](https://start.spring.i
 
 ### Tecnologías Base
 
-| Campo | Valor |
-|-------|-------|
-| Project | Maven |
-| Language | Java |
-| Spring Boot | 4.0.5 |
-| Packaging | Jar |
-| Java | 25 (LTS) |
+| Campo       | Valor    |
+|-------------|----------|
+| Project     | Maven    |
+| Language    | Java     |
+| Spring Boot | 4.0.5    |
+| Packaging   | Jar      |
+| Java        | 25 (LTS) |
 
 ### Metadata del Proyecto
 
-| Campo | Valor |
-|-------|-------|
-| Group | `tecnm.mx` |
-| Artifact | `vdcp-api` |
+| Campo        | Valor               |
+|--------------|---------------------|
+| Group        | `tecnm.mx`          |
+| Artifact     | `vdcp-api`          |
 | Package name | `tecnm.mx.vdcp.api` |
 
 ### Dependencias Incluidas
 
-| Dependencia | Propósito |
-|-------------|-----------|
-| Spring Web | Implementación de controladores REST |
-| Spring Boot Actuator | Observabilidad y monitoreo |
-| Validation | Validación de datos con Jakarta Bean Validation |
+| Dependencia          | Propósito                                       |
+|----------------------|-------------------------------------------------|
+| Spring Web           | Implementación de controladores REST            |
+| Spring Boot Actuator | Observabilidad y monitoreo                      |
+| Validation           | Validación de datos con Jakarta Bean Validation |
 
 ### Dependencias Futuras
 
