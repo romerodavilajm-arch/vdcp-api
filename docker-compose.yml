@@ -1,0 +1,41 @@
+# Archivo docker-compose.yml para entorno de desarrollo
+# Define los servicios necesarios para el proyecto
+
+services:
+  # Servicio principal de desarrollo
+  dev:
+    # Construye la imagen usando el Dockerfile en el directorio actual
+    # Docker Compose buscará un archivo llamado 'Dockerfile' en el directorio especificado
+    build: .
+    
+    # Mapeo de puertos: HOST:CONTENEDOR
+    # Expone el puerto 8080 del contenedor en el puerto 8080 del host
+    # Permite acceder a la aplicación desde el navegador en http://localhost:8080
+    ports:
+      - "8080:8080"
+    
+    # Montajes de volumen: HOST:CONTENEDOR
+    # Monta el directorio actual (.) en /app dentro del contenedor
+    # Esto sobrescribe el contenido de /app con el código fuente del host
+    # Permite desarrollo en caliente: los cambios en el código se reflejan inmediatamente
+    # sin necesidad de reconstruir la imagen
+    volumes:
+      - .:/app
+    
+    # Establece el directorio de trabajo dentro del contenedor
+    # Todas las instrucciones (como comandos) se ejecutarán desde aquí
+    # Esto debe coincidir con el WORKDIR definido en el Dockerfile (/app)
+    working_dir: /app
+    
+    # stdin_open: true - Mantiene el STDIN (entrada estándar) abierto
+    # Permite que el contenedor reciba entrada interactiva desde la terminal
+    # Equivalente a la opción -i (interactive) en 'docker run'
+    # Útil para ejecutar comandos que requieren entrada del usuario
+    stdin_open: true
+    
+    # tty: true - Asigna una pseudo-terminal (PTY)
+    # Proporciona una terminal interactiva con funcionalidades completas
+    # Equivalente a la opción -t (tty) en 'docker run'
+    # Permite que la salida tenga colores, manejo de señales, etc.
+    # Combinado con stdin_open, permite usar una shell interactiva como bash
+    tty: true
