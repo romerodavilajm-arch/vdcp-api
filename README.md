@@ -32,12 +32,6 @@ El proyecto se inicializó utilizando [Spring Initializr](https://start.spring.i
 | Spring Boot Actuator | Observabilidad y monitoreo |
 | Validation | Validación de datos con Jakarta Bean Validation |
 
-## Notas de Configuración
-
-### Corrección de Package Name
-
-Durante la configuración inicial se identificó que el nombre de paquete original (`tecnm.mx.vdcp-api`) contenía un guión, lo cual no es válido en Java. Se corrigió a `tecnm.mx.vdcp.api` para cumplir con las convenciones de nomenclatura.
-
 ### Dependencias Futuras
 
 Considerar agregar según necesidades del proyecto:
