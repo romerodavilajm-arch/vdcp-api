@@ -88,6 +88,8 @@
 
 			<!-- Añadir el plugin generador...
 			Este es el motor que generará el código. -->
+
+			<!--
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
@@ -117,6 +119,8 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
+
 			<!-- Fin del plugin añadido -->
 		</plugins>
 	</build>
